@@ -3,16 +3,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "tsx src/index.ts",
-    "dev": "tsx watch src/index.ts"
+    "start": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts"
   },
   "dependencies": {
     "@clerk/express": "^1.5.2",
-    "express": "^5.1.0"
+    "@prisma/client": "^6.10.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "svix": "^1.67.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.2",
     "dotenv": "^16.5.0",
+    "prisma": "^6.10.1",
     "tsx": "^4.19.4"
   }
 }
