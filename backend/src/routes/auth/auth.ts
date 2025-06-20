@@ -3,7 +3,6 @@ import express from 'express'
 import { clerkClient, clerkMiddleware, getAuth, requireAuth } from '@clerk/express'
 
 const app = express()
-const PORT = 3002
 
 app.use(clerkMiddleware())
 
@@ -20,8 +19,9 @@ app.get('/protected', requireAuth(), async (req, res) => {
 
   // Use Clerk's JavaScript Backend SDK to get the user's User object
   const user = await clerkClient.users.getUser(userId)
+  const allusers= await clerkClient.users.getUserList()
+  res.send({ allusers })
 
-  res.json({ user })
 })
 
 // Assuming you have a template engine installed and are using a Clerk JavaScript SDK on this page
@@ -29,7 +29,4 @@ app.get('/sign-in', (req, res) => {
   res.render('sign-in')
 })
 
-// Start the server and listen on the specified port
-app.listen(PORT, () => {
-  console.log(`Example app listening at http://localhost:${PORT}`)
-})
+export default app

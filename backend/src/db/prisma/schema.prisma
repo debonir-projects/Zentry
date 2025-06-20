@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id           String        @id @default(cuid())
+  clerkUserId  String        @unique
+  email        String        @unique
+  name         String?
+  image        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  budgets      Budget[]
+  ownedGroups  Group[]       @relation("GroupOwner")
+  groupMembers GroupMember[]
+  memories     Memory[]
+  transactions Transaction[]
+}
+
+model Budget {
+  id        String   @id @default(cuid())
+  amount    Float 
+  month     String
+  userId    String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+
+  @@unique([userId, month])
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  text      String
+  amount    Float
+  userId    String
+  createdAt DateTime @default(now())
+  memories  Memory[]
+  user      User     @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Memory {
+  id            String      @id @default(cuid())
+  title         String
+  description   String?
+  imageUrl      String?
+  userId        String
+  transactionId String
+  createdAt     DateTime    @default(now())
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+}
+
+model Group {
+  id           String             @id @default(cuid())
+  name         String
+  description  String?
+  ownerId      String
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  owner        User               @relation("GroupOwner", fields: [ownerId], references: [clerkUserId], onDelete: Cascade)
+  members      GroupMember[]
+  transactions GroupTransaction[]
+}
+
+model GroupMember {
+  id       String   @id @default(cuid())
+  groupId  String
+  userId   String
+  role     String   @default("member")
+  limit    Float?
+  joinedAt DateTime @default(now())
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model GroupTransaction {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  text      String
+  amount    Float
+  createdAt DateTime @default(now())
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
