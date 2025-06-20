@@ -1,0 +1,18 @@
+{
+  "name": "clerk-express-quickstart",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@clerk/express": "^1.5.2",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "dotenv": "^16.5.0",
+    "tsx": "^4.19.4"
+  }
+}
