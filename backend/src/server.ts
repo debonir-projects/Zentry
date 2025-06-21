@@ -4,7 +4,8 @@ import cors from 'cors'
 import { clerkMiddleware } from '@clerk/express'
 import authRoutes from './routes/auth/auth'
 import userRoutes from './routes/auth/postUser'
-import webhookRoutes from './webhooks/index.js';
+import webhookRoutes from './webhooks/index.js'
+import routes from './routes/index' // Import the transaction routes
 
 const app = express()
 const PORT = 3000
@@ -27,6 +28,9 @@ app.use('/auth', authRoutes)
 // User routes
 app.use('/api/postUser', userRoutes)
 app.use('/api/webhooks', webhookRoutes)
+
+// Add transaction routes
+app.use('/api', routes.router)
 
 app.listen(PORT, () => {
   console.log(`Example app listening at http://localhost:${PORT}`)

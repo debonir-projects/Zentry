@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "../db/generated/prisma";
+import prisma from "../db/db";
 import requiredAuth from '@clerk/express'
-const prisma = new PrismaClient();
 
 // Extend Request to include `auth` field
 interface AuthenticatedRequest extends Request {
