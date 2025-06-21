@@ -5,6 +5,7 @@ interface Request extends ExpressRequest {
   query: {
     startDate?: string;
     endDate?: string;
+    userId?: string;
   };
   body: {
     text?: string;
@@ -62,7 +63,8 @@ export async function postTransactionById(req: Request, res: Response): Promise<
 
 export async function getAllUsersTransactions(req: Request, res: Response): Promise<any> {
   try {
-    const { userId } = req.body;
+    
+    const { userId } = req.query;
     const { startDate, endDate } = req.query;
 
     if (!userId) {
@@ -108,7 +110,7 @@ export async function getAllUsersTransactions(req: Request, res: Response): Prom
 
 export async function getTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const { userId } = req.body;
+    const { userId } = req.query;
     const id = req.params.id;
 
     if (!userId || !id) {
