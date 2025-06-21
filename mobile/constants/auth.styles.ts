@@ -65,4 +65,6 @@ export const authStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 30,
   },
+
 });
+

@@ -52,7 +52,7 @@ export default function TransactionScreen() {
       }
 
       // Use correct endpoint that matches your backend route
-      const response = await fetch('localhost:3000/api/transactions/getUserTransactions', {
+      const response = await fetch('https://zentry-14tu.onrender.com/api/getUserTransactions', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

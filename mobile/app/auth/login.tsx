@@ -38,7 +38,7 @@ export default function LoginScreen() {
       });
 
       await setActive({ session: result.createdSessionId });
-      router.replace("../(tabs)");
+      router.replace("/home"); // Redirect to home tab after login
     } catch (err: any) {
       console.error("Error signing in:", err);
       setError(err.errors?.[0]?.message || "Something went wrong");

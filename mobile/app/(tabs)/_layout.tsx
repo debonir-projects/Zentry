@@ -9,6 +9,7 @@ import { Colors } from '@/constants/Colors';
 // import { useColorScheme } from '@/hooks/useColorScheme'; // Not needed if forcing dark mode
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome5';
 
 export default function TabLayout() {
   // Force dark mode
@@ -64,11 +65,11 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="group"
+        name="AI"
         options={{
-          title: 'Group',
+          title: 'AI',
           tabBarIcon: ({ color }) => (
-            <FontAwesome name="group" size={30} color='red'
+            <FontAwesome6 name="brain" size={30} color='red'
             />
           ),
         }}
