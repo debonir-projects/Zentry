@@ -7,6 +7,6 @@ const group = () => {
       <Text>group</Text>
     </View>
   )
-}
+} 
 
 export default group
