@@ -107,7 +107,7 @@ export async function getAllUsersTransactions(req: Request, res: Response): Prom
  */
 export async function getTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const userId = req.body
+    const { userId } = req.body
     const id = req.params.id;
     if (!userId || !id) return res.status(400).json({ error: "Missing parameters" });
 
