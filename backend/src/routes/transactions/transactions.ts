@@ -12,6 +12,7 @@ interface Request extends ExpressRequest {
   };
   body: {
     text?: string;
+    userId?: string;
     amount?: number | string;
     memories?: {
       title?: string;
@@ -22,7 +23,7 @@ interface Request extends ExpressRequest {
 }
 export async function postTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const { userId } = req.auth;
+    const { userId } = req.body;
     const { text, amount, memories = [] } = req.body;
 
     const userExists = await prisma.user.findUnique({ where: { clerkUserId: userId } });
@@ -62,7 +63,7 @@ export async function postTransactionById(req: Request, res: Response): Promise<
 
 export async function getAllUsersTransactions(req: Request, res: Response): Promise<any> {
   try {
-    const { userId } = req.auth;
+    const { userId } = req.body
     const { startDate, endDate } = req.query;
     let dateFilter = {};
 
@@ -106,7 +107,7 @@ export async function getAllUsersTransactions(req: Request, res: Response): Prom
  */
 export async function getTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const userId = req.auth.userId;
+    const userId = req.body
     const id = req.params.id;
     if (!userId || !id) return res.status(400).json({ error: "Missing parameters" });
 
@@ -131,7 +132,7 @@ export async function getTransactionById(req: Request, res: Response): Promise<a
  */
 export async function updateTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const userId = req.auth.userId;
+    const userId = req.body.userId
     const id = req.params.id; // Get ID from params, not auth
     const { text, amount,  } = req.body; // Add category
 
@@ -165,7 +166,7 @@ export async function updateTransactionById(req: Request, res: Response): Promis
  */
 export async function deleteTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const userId = req.auth.userId;
+    const userId = req.body.userId
     const id = req.params.id; // Get ID from params, not auth
 
     if (!userId || !id) return res.status(400).json({ error: "Missing parameters" });
