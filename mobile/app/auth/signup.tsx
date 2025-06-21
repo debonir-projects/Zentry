@@ -45,7 +45,7 @@ export default function SignUpScreen() {
       
       // Create a backend user (optional, depending on your backend integration)
       try {
-        await fetch('http://localhost:3000/api/postUser', {
+        await fetch('https://zentry-14tu.onrender.com/api/postUser', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
