@@ -40,14 +40,27 @@ model Budget {
   @@unique([userId, month])
 }
 
+enum TransactionCategory {
+  FOOD
+  TRANSPORT
+  SHOPPING
+  ENTERTAINMENT
+  BILLS
+  HEALTH
+  EDUCATION
+  TRAVEL
+  OTHER
+}
+
 model Transaction {
-  id        String   @id @default(cuid())
+  id        String               @id @default(cuid())
   text      String
   amount    Float
+  category  TransactionCategory? // Using enum instead of string
   userId    String
-  createdAt DateTime @default(now())
+  createdAt DateTime             @default(now())
   memories  Memory[]
-  user      User     @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
+  user      User                 @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
 
   @@index([userId])
 }
