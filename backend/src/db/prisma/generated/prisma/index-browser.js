@@ -142,6 +142,7 @@ exports.Prisma.TransactionScalarFieldEnum = {
   id: 'id',
   text: 'text',
   amount: 'amount',
+  category: 'category',
   userId: 'userId',
   createdAt: 'createdAt'
 };
@@ -197,7 +198,17 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
-
+exports.TransactionCategory = exports.$Enums.TransactionCategory = {
+  FOOD: 'FOOD',
+  TRANSPORT: 'TRANSPORT',
+  SHOPPING: 'SHOPPING',
+  ENTERTAINMENT: 'ENTERTAINMENT',
+  BILLS: 'BILLS',
+  HEALTH: 'HEALTH',
+  EDUCATION: 'EDUCATION',
+  TRAVEL: 'TRAVEL',
+  OTHER: 'OTHER'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',

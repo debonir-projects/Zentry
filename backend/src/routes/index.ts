@@ -8,7 +8,7 @@ const router = express.Router();
 // Mount router
 // Use your Prisma-based auth middleware
 router.post("/postTransactionById/:userId", authMiddleware, postTransactionById);
-router.get("/getUserTransactions", authMiddleware, getAllUsersTransactions);
+router.get("/getUserTransactions",  getAllUsersTransactions);
 router.get("/getTransactionById/:id", authMiddleware, getTransactionById);
 router.put("/updateTransactionById/:id", authMiddleware, updateTransactionById);
 router.delete("/deleteTransactionById/:id", authMiddleware, deleteTransactionById);
