@@ -1,5 +1,4 @@
- 
-  import { Request as ExpressRequest, Response } from 'express';
+import { Request as ExpressRequest, Response } from 'express';
 import prisma from '../../db/db';
 
 interface Request extends ExpressRequest {
@@ -39,6 +38,7 @@ export async function postTransactionById(req: Request, res: Response): Promise<
       data: {
         text,
         amount: parseFloat(String(amount)),
+        
         userId,
         memories: {
           create: memories.map((memory) => ({
@@ -77,6 +77,7 @@ export async function getAllUsersTransactions(req: Request, res: Response): Prom
 
     const transactions = await prisma.transaction.findMany({
       where: {
+        userId, // Add this to filter by the authenticated user
         ...dateFilter,
       },
       include: {
@@ -84,8 +85,8 @@ export async function getAllUsersTransactions(req: Request, res: Response): Prom
         user: {
           select: {
             clerkUserId: true,
-            name: true, // optional: include name if available
-            email: true // optional
+            name: true,
+            email: true
           }
         }
       },
@@ -130,8 +131,9 @@ export async function getTransactionById(req: Request, res: Response): Promise<a
  */
 export async function updateTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const { id, userId } = req.auth;
-    const { text, amount } = req.body;
+    const userId = req.auth.userId;
+    const id = req.params.id; // Get ID from params, not auth
+    const { text, amount,  } = req.body; // Add category
 
     if (!userId || !id) return res.status(400).json({ error: "Missing parameters" });
 
@@ -146,6 +148,7 @@ export async function updateTransactionById(req: Request, res: Response): Promis
       data: {
         ...(text && { text }),
         ...(amount !== undefined && { amount: parseFloat(String(amount)) }),
+       
       },
       include: { memories: true },
     });
@@ -162,7 +165,9 @@ export async function updateTransactionById(req: Request, res: Response): Promis
  */
 export async function deleteTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const { id, userId } = req.auth;
+    const userId = req.auth.userId;
+    const id = req.params.id; // Get ID from params, not auth
+
     if (!userId || !id) return res.status(400).json({ error: "Missing parameters" });
 
     const transaction = await prisma.transaction.findUnique({ where: { id } });
