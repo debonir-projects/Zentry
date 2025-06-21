@@ -7,7 +7,7 @@ import userRoutes from './routes/auth/postUser'
 import webhookRoutes from './webhooks/index.js'
 import routes from './routes/index' 
 import { uploadCloudinaryAndAnalyze, uploadMiddleware } from './routes/imageUpload/analyseAndUpload'
-import { authMiddleware } from './middleware/auth'
+
 import connectMongoDB from './db/mongodb/mongoClient'
 const app = express()
 const PORT = 3000
