@@ -14,6 +14,7 @@ import * as SecureStore from 'expo-secure-store'; // Added missing import
 import transactionstyles from '@/constants/transactions';
 import { useSafeAuth } from '@/hooks/useSafeAuth';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useUser } from '@clerk/clerk-expo';
 
 // Define the transaction type based on your backend model
 interface Transaction {
@@ -31,8 +32,9 @@ export default function TransactionScreen() {
   const router = useRouter();
   // Use the safe auth hook for consistent auth state
   const { getToken, userId, isSignedIn, isLoaded } = useSafeAuth();
+  const { user } = useUser();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -57,7 +59,10 @@ export default function TransactionScreen() {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          userId: userId
+        })
       });
 
       if (!response.ok) {

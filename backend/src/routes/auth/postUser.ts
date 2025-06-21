@@ -8,8 +8,8 @@ router.get("/user-status", (_req: Request, res: Response): void => {
   res.json({ status: "User service is running" });
 });
 
-// Create user endpoint
-router.post("/", async (req: Request, res: Response): Promise<void> => {
+
+router.post("/signup", async (req: Request, res: Response): Promise<void> => {
   const { username, email, password } = req.body;
   
   try {
@@ -39,7 +39,7 @@ router.get("/:id", async (req: Request, res: Response): Promise<void> => {
 });
 
 // Get all users endpoint
-router.get("/", async (_req: Request, res: Response): Promise<void> => {
+router.get("/getAll", async (_req: Request, res: Response): Promise<void> => {
   try {
     const users = await clerkClient.users.getUserList();
     res.json(users);
