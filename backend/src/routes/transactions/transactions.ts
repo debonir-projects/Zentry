@@ -2,10 +2,6 @@ import { Request as ExpressRequest, Response } from 'express';
 import prisma from '../../db/db';
 
 interface Request extends ExpressRequest {
-  auth: {
-    userId: string;
-    id?: string;
-  };
   query: {
     startDate?: string;
     endDate?: string;
@@ -21,10 +17,15 @@ interface Request extends ExpressRequest {
     }[];
   };
 }
+
 export async function postTransactionById(req: Request, res: Response): Promise<any> {
   try {
     const { userId } = req.body;
     const { text, amount, memories = [] } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
 
     const userExists = await prisma.user.findUnique({ where: { clerkUserId: userId } });
     if (!userExists) return res.status(404).json({ error: "User not found" });
@@ -39,7 +40,6 @@ export async function postTransactionById(req: Request, res: Response): Promise<
       data: {
         text,
         amount: parseFloat(String(amount)),
-        
         userId,
         memories: {
           create: memories.map((memory) => ({
@@ -60,13 +60,16 @@ export async function postTransactionById(req: Request, res: Response): Promise<
   }
 }
 
-
 export async function getAllUsersTransactions(req: Request, res: Response): Promise<any> {
   try {
-    const { userId } = req.body
+    const { userId } = req.body;
     const { startDate, endDate } = req.query;
-    let dateFilter = {};
 
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    let dateFilter = {};
     if (startDate || endDate) {
       dateFilter = {
         createdAt: {
@@ -78,7 +81,7 @@ export async function getAllUsersTransactions(req: Request, res: Response): Prom
 
     const transactions = await prisma.transaction.findMany({
       where: {
-        userId, // Add this to filter by the authenticated user
+        userId,
         ...dateFilter,
       },
       include: {
@@ -102,14 +105,15 @@ export async function getAllUsersTransactions(req: Request, res: Response): Prom
     res.status(500).json({ error: "Failed to fetch transactions" });
   }
 }
-/**
- * Get a transaction by ID
- */
+
 export async function getTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const { userId } = req.body
+    const { userId } = req.body;
     const id = req.params.id;
-    if (!userId || !id) return res.status(400).json({ error: "Missing parameters" });
+
+    if (!userId || !id) {
+      return res.status(400).json({ error: "Missing parameters" });
+    }
 
     const transaction = await prisma.transaction.findUnique({
       where: { id },
@@ -127,16 +131,15 @@ export async function getTransactionById(req: Request, res: Response): Promise<a
   }
 }
 
-/**
- * Update a transaction
- */
 export async function updateTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const userId = req.body.userId
-    const id = req.params.id; // Get ID from params, not auth
-    const { text, amount,  } = req.body; // Add category
+    const { userId } = req.body;
+    const id = req.params.id;
+    const { text, amount } = req.body;
 
-    if (!userId || !id) return res.status(400).json({ error: "Missing parameters" });
+    if (!userId || !id) {
+      return res.status(400).json({ error: "Missing parameters" });
+    }
 
     const transaction = await prisma.transaction.findUnique({ where: { id } });
     if (!transaction) return res.status(404).json({ error: "Transaction not found" });
@@ -149,7 +152,6 @@ export async function updateTransactionById(req: Request, res: Response): Promis
       data: {
         ...(text && { text }),
         ...(amount !== undefined && { amount: parseFloat(String(amount)) }),
-       
       },
       include: { memories: true },
     });
@@ -161,15 +163,14 @@ export async function updateTransactionById(req: Request, res: Response): Promis
   }
 }
 
-/**
- * Delete a transaction
- */
 export async function deleteTransactionById(req: Request, res: Response): Promise<any> {
   try {
-    const userId = req.body.userId
-    const id = req.params.id; // Get ID from params, not auth
+    const { userId } = req.body;
+    const id = req.params.id;
 
-    if (!userId || !id) return res.status(400).json({ error: "Missing parameters" });
+    if (!userId || !id) {
+      return res.status(400).json({ error: "Missing parameters" });
+    }
 
     const transaction = await prisma.transaction.findUnique({ where: { id } });
     if (!transaction) return res.status(404).json({ error: "Transaction not found" });
