@@ -1,10 +1,10 @@
+import { clerkClient } from "@clerk/express";
 import { Request, Response, NextFunction } from "express";
 import prisma from "../db/db";
-import requiredAuth from '@clerk/express'
 
 // Extend Request to include `auth` field
 interface AuthenticatedRequest extends Request {
-  auth?: {
+  auth: {
     userId: string;
   };
 }
@@ -24,8 +24,15 @@ export const authMiddleware = async (
   const token = authHeader.replace("Bearer ", "").trim();
 
   try {
+    // Use Clerk to verify the token
+    // Extract session ID and token from the provided token
+    const [sessionId, sessionToken] = token.split('_');
+    const session = await clerkClient.sessions.verifySession(sessionId, sessionToken);
+    const clerkUserId = session.userId;
+    
+    // Find the user in your database
     const user = await prisma.user.findUnique({
-      where: { id: token },
+      where: { clerkUserId },
     });
 
     if (!user) {
@@ -33,11 +40,10 @@ export const authMiddleware = async (
       return;
     }
 
-    req.auth = { userId: user.id };
-    next(); // Proceed to the route handler
+    req.auth = { userId: user.clerkUserId };
+    next();
   } catch (err) {
     console.error("Auth middleware error:", err);
-    res.status(500).json({ error: "Internal server error in auth" });
-    return;
+    res.status(401).json({ error: "Invalid authentication token" });
   }
 };
