@@ -14,7 +14,7 @@ const upload = multer({ dest: "uploads/" }); // Set up multer for file uploads
 // Use your Prisma-based auth middleware
 router.post("/postTransactionById/:userId", postTransactionById);
 router.get("/getUserTransactions", getAllUsersTransactions);
-router.get("/getTransactionById/:userId", getTransactionById);
+router.get("/getTransactionById", getTransactionById);
 router.put("/updateTransactionById/:id", updateTransactionById);
 router.delete("/deleteTransactionById/:id", deleteTransactionById);
 router.post("/uploadCloudinary/:userId", uploadMiddleware, uploadCloudinaryAndAnalyze);

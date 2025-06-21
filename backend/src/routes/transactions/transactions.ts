@@ -104,7 +104,7 @@ export async function getAllUsersTransactions(req: Request, res: Response): Prom
     res.json(transactions);
   } catch (error) {
     console.error("Error fetching transactions:", error);
-    res.status(500).json({ error: "Failed to fetch transactions" });
+    res.status(500).json({ error: "Failed to fetch Anirban's transactions " });
   }
 }
 
@@ -117,14 +117,13 @@ export async function getTransactionById(req: Request, res: Response): Promise<a
       return res.status(400).json({ error: "Missing parameters" });
     }
 
-    const transaction = await prisma.transaction.findUnique({
-      where: { id },
+    const transaction = await prisma.transaction.findMany({
+      where: {  userId },
       include: { memories: true },
     });
 
     if (!transaction) return res.status(404).json({ error: "Transaction not found" });
-    if (transaction.userId !== userId)
-      return res.status(403).json({ error: "Forbidden - transaction belongs to another user" });
+   
 
     res.json(transaction);
   } catch (error) {
