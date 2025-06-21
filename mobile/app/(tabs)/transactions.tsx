@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import * as SecureStore from 'expo-secure-store'; // Added missing import
 import transactionstyles from '@/constants/transactions';
 import { useSafeAuth } from '@/hooks/useSafeAuth';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -230,7 +231,8 @@ export default function TransactionScreen() {
       <TouchableOpacity 
         style={transactionstyles.fab}
         onPress={() => {
-          router.push('./../components/AddTransaction'); // Adjust path as needed
+          // Fixed navigation path for add transaction
+          router.push('../components/addTransaction');
         }}
       >
         <Text style={transactionstyles.fabText}>+</Text>
@@ -238,3 +240,4 @@ export default function TransactionScreen() {
     </SafeAreaView>
   );
 }
+
