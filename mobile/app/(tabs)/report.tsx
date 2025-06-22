@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Image,
   ActivityIndicator,
   TextInput,
+  FlatList,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
@@ -19,14 +20,26 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 // Replace with your Gemini API key
 const GEMINI_API_KEY = "AIzaSyBFFWcBbKD_YLt9u3ZOBvIUINsbt7gjKTc";
 
+// Filter options
+const FILTER_OPTIONS = {
+  TODAY: "Today",
+  LAST_WEEK: "Last Week",
+  LAST_MONTH: "Last Month",
+  LAST_3_MONTHS: "Last 3 Months",
+};
+
 export default function TransactionScreen() {
   const [scannerModalVisible, setScannerModalVisible] = useState(false);
   const [scannedImage, setScannedImage] = useState<string | null>(null);
   const [scannedData, setScannedData] = useState<any>(null);
   const [scanning, setScanning] = useState(false);
-  const [editableData, setEditableData] = useState<any>(null); // Add this state to manage editable data
+  const [editableData, setEditableData] = useState<any>(null);
   const [savedBills, setSavedBills] = useState<any[]>([]);
+  const [filterDropdownVisible, setFilterDropdownVisible] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState(FILTER_OPTIONS.TODAY);
+  const [filteredTransactions, setFilteredTransactions] = useState<any[]>([]);
 
+  // Enhanced transactions with actual dates
   const transactions = [
     {
       icon: <FontAwesome5 name="hamburger" size={20} color="#FF2D2D" />,
@@ -34,6 +47,7 @@ export default function TransactionScreen() {
       place: "Pizza Place",
       amount: -18.5,
       time: "10:45 AM",
+      date: new Date(), // Today
     },
     {
       icon: <FontAwesome5 name="car" size={20} color="#FF2D2D" />,
@@ -41,6 +55,7 @@ export default function TransactionScreen() {
       place: "RideShare",
       amount: -12.0,
       time: "9:30 AM",
+      date: new Date(), // Today
     },
     {
       icon: <MaterialIcons name="shopping-bag" size={20} color="#FF2D2D" />,
@@ -48,6 +63,7 @@ export default function TransactionScreen() {
       place: "Market",
       amount: -45.2,
       time: "Yesterday",
+      date: new Date(Date.now() - 86400000), // Yesterday
     },
     {
       icon: <MaterialIcons name="sports-esports" size={20} color="#FF2D2D" />,
@@ -55,6 +71,7 @@ export default function TransactionScreen() {
       place: "Game Store",
       amount: -25.99,
       time: "Yesterday",
+      date: new Date(Date.now() - 86400000), // Yesterday
     },
     {
       icon: <Ionicons name="medkit" size={20} color="#FF2D2D" />,
@@ -62,6 +79,7 @@ export default function TransactionScreen() {
       place: "Pharmacy",
       amount: -30.0,
       time: "Apr 22",
+      date: new Date(2025, 3, 22), // April 22, 2025
     },
     {
       icon: <MaterialIcons name="subscriptions" size={20} color="#FF2D2D" />,
@@ -69,6 +87,7 @@ export default function TransactionScreen() {
       place: "Streaming Service",
       amount: 12.99,
       time: "Apr 20",
+      date: new Date(2025, 3, 20), // April 20, 2025
     },
     {
       icon: <Ionicons name="briefcase" size={20} color="#00FFAA" />,
@@ -76,8 +95,82 @@ export default function TransactionScreen() {
       place: "Employer",
       amount: 1200.0,
       time: "Apr 20",
+      date: new Date(2025, 3, 20), // April 20, 2025
     },
+    {
+      icon: <FontAwesome5 name="tshirt" size={20} color="#FF2D2D" />,
+      category: "Clothing",
+      place: "Fashion Store",
+      amount: -89.95,
+      time: "Mar 15",
+      date: new Date(2025, 2, 15), // March 15, 2025
+    },
+    {
+      icon: <MaterialIcons name="school" size={20} color="#FF2D2D" />,
+      category: "Education",
+      place: "Online Course",
+      amount: -199.99,
+      time: "Feb 28",
+      date: new Date(2025, 1, 28), // February 28, 2025
+    },
+    {
+      icon: <FontAwesome5 name="plane" size={20} color="#FF2D2D" />,
+      category: "Travel",
+      place: "Airline Tickets",
+      amount: -450.0,
+      time: "Jan 10",
+      date: new Date(2025, 0, 10), // January 10, 2025
+    }
   ];
+
+  // Format date for display
+  const formatDisplayDate = (date: Date): string => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return "Today";
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return "Yesterday";
+    } else {
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+  };
+
+  // Filter transactions based on selected time period
+  const filterTransactions = () => {
+    const today = new Date();
+    let startDate = new Date();
+    
+    switch(selectedFilter) {
+      case FILTER_OPTIONS.TODAY:
+        startDate = new Date(today.setHours(0, 0, 0, 0));
+        break;
+      case FILTER_OPTIONS.LAST_WEEK:
+        startDate = new Date(today);
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case FILTER_OPTIONS.LAST_MONTH:
+        startDate = new Date(today);
+        startDate.setMonth(today.getMonth() - 1);
+        break;
+      case FILTER_OPTIONS.LAST_3_MONTHS:
+        startDate = new Date(today);
+        startDate.setMonth(today.getMonth() - 3);
+        break;
+      default:
+        startDate = new Date(today.setHours(0, 0, 0, 0));
+    }
+    
+    const filtered = transactions.filter(transaction => transaction.date >= startDate);
+    setFilteredTransactions(filtered);
+  };
+
+  // Update filtered transactions whenever the filter changes
+  useEffect(() => {
+    filterTransactions();
+  }, [selectedFilter]);
 
   // Helper: Convert image to base64
   const getBase64 = async (uri: string) => {
@@ -123,9 +216,7 @@ Total amount paid in INR format
     }
   ],
   "total": "₹amount as string or null"
-}
-
-`;
+}`;
 
       const result = await model.generateContent([
         prompt,
@@ -200,52 +291,134 @@ Total amount paid in INR format
     });
   };
 
+  // Get summary for the selected period
+  const getSummary = () => {
+    let income = 0;
+    let expenses = 0;
+    
+    filteredTransactions.forEach(item => {
+      if (item.amount > 0) {
+        income += item.amount;
+      } else {
+        expenses += Math.abs(item.amount);
+      }
+    });
+    
+    return { income, expenses, net: income - expenses };
+  };
+
+  const summary = getSummary();
+
   return (
     <View style={reportstyles.container}>
       <StatusBar barStyle="light-content" />
       <Text style={reportstyles.headerLogo}>ZENTRY</Text>
 
-      <View style={reportstyles.dropdown}>
+      {/* Filter Dropdown */}
+      <TouchableOpacity 
+        style={reportstyles.dropdown}
+        onPress={() => setFilterDropdownVisible(!filterDropdownVisible)}
+      >
         <Text style={{ color: "#fff", fontWeight: "600", fontSize: 14 }}>
-          Today ⌄
+          {selectedFilter} <Ionicons name="chevron-down" size={14} color="#fff" />
         </Text>
+      </TouchableOpacity>
+
+      {/* Filter Options Dropdown */}
+      {filterDropdownVisible && (
+        <View style={reportstyles.filterDropdown}>
+          {Object.values(FILTER_OPTIONS).map((option) => (
+            <TouchableOpacity
+              key={option}
+              style={[
+                reportstyles.filterOption,
+                selectedFilter === option && reportstyles.selectedFilterOption
+              ]}
+              onPress={() => {
+                setSelectedFilter(option);
+                setFilterDropdownVisible(false);
+              }}
+            >
+              <Text style={[
+                reportstyles.filterOptionText,
+                selectedFilter === option && reportstyles.selectedFilterOptionText
+              ]}>
+                {option}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Summary Card */}
+      <View style={reportstyles.summaryCard}>
+        <View style={reportstyles.summaryRow}>
+          <View style={reportstyles.summaryItem}>
+            <Text style={reportstyles.summaryLabel}>Income</Text>
+            <Text style={[reportstyles.summaryAmount, {color: '#00FFAA'}]}>
+              ${summary.income.toFixed(2)}
+            </Text>
+          </View>
+          <View style={reportstyles.summaryItem}>
+            <Text style={reportstyles.summaryLabel}>Expenses</Text>
+            <Text style={[reportstyles.summaryAmount, {color: '#FF2D2D'}]}>
+              ${summary.expenses.toFixed(2)}
+            </Text>
+          </View>
+          <View style={reportstyles.summaryItem}>
+            <Text style={reportstyles.summaryLabel}>Net</Text>
+            <Text style={[
+              reportstyles.summaryAmount, 
+              {color: summary.net >= 0 ? '#00FFAA' : '#FF2D2D'}
+            ]}>
+              ${Math.abs(summary.net).toFixed(2)}
+            </Text>
+          </View>
+        </View>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {transactions.map((item, index) => (
-          <View key={index} style={reportstyles.transactionCard}>
-            <View style={reportstyles.transactionRow}>
-              <View style={{ marginRight: 12 }}>{item.icon}</View>
-              <View style={reportstyles.transactionLeft}>
-                <Text style={reportstyles.categoryText}>{item.category}</Text>
-                <Text style={reportstyles.subtext}>{item.place}</Text>
-              </View>
-              <View style={{ alignItems: "flex-end" }}>
-                <Text
-                  style={
-                    item.amount >= 0
-                      ? reportstyles.amountTextPositive
-                      : reportstyles.amountText
-                  }
-                >
-                  {item.amount >= 0
-                    ? `+ $${item.amount}`
-                    : `- $${Math.abs(item.amount)}`}
-                </Text>
-                <Text style={reportstyles.timestamp}>{item.time}</Text>
+        {filteredTransactions.length > 0 ? (
+          filteredTransactions.map((item, index) => (
+            <View key={index} style={reportstyles.transactionCard}>
+              <View style={reportstyles.transactionRow}>
+                <View style={{ marginRight: 12 }}>{item.icon}</View>
+                <View style={reportstyles.transactionLeft}>
+                  <Text style={reportstyles.categoryText}>{item.category}</Text>
+                  <Text style={reportstyles.subtext}>{item.place}</Text>
+                </View>
+                <View style={{ alignItems: "flex-end" }}>
+                  <Text
+                    style={
+                      item.amount >= 0
+                        ? reportstyles.amountTextPositive
+                        : reportstyles.amountText
+                    }
+                  >
+                    {item.amount >= 0
+                      ? `+ ₹${item.amount.toFixed(2)}`
+                      : `- ₹${Math.abs(item.amount).toFixed(2)}`}
+                  </Text>
+                  <Text style={reportstyles.timestamp}>{formatDisplayDate(item.date)}</Text>
+                </View>
               </View>
             </View>
+          ))
+        ) : (
+          <View style={reportstyles.emptyState}>
+            <Ionicons name="document-text-outline" size={48} color="#333" />
+            <Text style={reportstyles.emptyStateText}>
+              No transactions found for this period
+            </Text>
           </View>
-        ))}
+        )}
 
         {savedBills.map((bill, idx) => (
           <View
             key={idx}
             style={[reportstyles.transactionCard, { borderColor: "#00FFAA" }]}
           >
-            <Text
-              style={[reportstyles.categoryText, { color: "#00FFAA" }]}
-            >
+            <Text style={[reportstyles.categoryText, { color: "#00FFAA" }]}>
               {bill.vendor || "Vendor"}
             </Text>
             <Text style={reportstyles.subtext}>{bill.date || "Date"}</Text>
@@ -287,11 +460,6 @@ Total amount paid in INR format
         onPress={handleScanBill}
       >
         <Ionicons name="scan" size={28} color="#fff" />
-      </TouchableOpacity>
-
-      {/* Existing Add Button */}
-      <TouchableOpacity style={reportstyles.floatingAddButton}>
-        <Text style={reportstyles.plusIcon}>＋</Text>
       </TouchableOpacity>
 
       {/* Scanner Modal */}
