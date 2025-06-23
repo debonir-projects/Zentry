@@ -19,32 +19,64 @@ export default function ZentryDashboard() {
   const [formData, setFormData] = useState({
     text: '',
     note: '',
-    category: 'Food',
+    category: 'Shopping',
     amount: '',
   });
   const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState([
     { 
       id: '1',
-      text: 'Coffee at Starbucks',
-      amount: -20.00,
-      category: 'Food',
+      text: 'The Ordinary Niacinamide Serum',
+      amount: -799.00,
+      category: 'Shopping',
       date: new Date(),
-      time: '0:20' 
+      time: '10:15'
     },
     { 
       id: '2',
-      text: 'Refund from Amazon',
-      amount: 58.00,
+      text: 'Coffee with friends',
+      amount: -180.00,
+      category: 'Food',
+      date: new Date(),
+      time: '12:30'
+    },
+    { 
+      id: '3',
+      text: 'Received UPI from Mom',
+      amount: 2000.00,
+      category: 'Income',
+      date: new Date(),
+      time: '09:00'
+    },
+    { 
+      id: '4',
+      text: 'Sunscreen SPF50',
+      amount: -499.00,
       category: 'Shopping',
       date: new Date(),
-      time: '00:00' 
+      time: '16:45'
+    },
+    { 
+      id: '5',
+      text: 'Metro Card Recharge',
+      amount: -300.00,
+      category: 'Transport',
+      date: new Date(),
+      time: '08:20'
+    },
+    { 
+      id: '6',
+      text: 'Netflix Subscription',
+      amount: -199.00,
+      category: 'Entertainment',
+      date: new Date(),
+      time: '21:00'
     }
   ]);
-  const [balance, setBalance] = useState(8750);
+  const [balance, setBalance] = useState(3500);
   const router = useRouter();
 
-  const categories = ['Food', 'Transport', 'Shopping', 'Entertainment', 'Bills', 'Health', 'Education', 'Travel', 'Other'];
+  const categories = ['Shopping', 'Food', 'Transport', 'Entertainment', 'Bills', 'Health', 'Education', 'Income', 'Other'];
 
   // Get category icon
   const getCategoryIcon = (category) => {
@@ -56,7 +88,7 @@ export default function ZentryDashboard() {
       case 'Bills': return 'receipt';
       case 'Health': return 'favorite';
       case 'Education': return 'school';
-      case 'Travel': return 'flight';
+      case 'Income': return 'attach-money';
       default: return 'category';
     }
   };
@@ -92,7 +124,7 @@ export default function ZentryDashboard() {
     setBalance(prevBalance => prevBalance + parseFloat(formData.amount));
     
     // Reset form and close modal
-    setFormData({ text: '', note: '', category: 'Food', amount: '' });
+    setFormData({ text: '', note: '', category: 'Shopping', amount: '' });
     setLoading(false);
     setModalVisible(false);
     
@@ -106,11 +138,13 @@ export default function ZentryDashboard() {
         <View style={homestyles.profileSection}>
           <Image
             source={{
-              uri: "https://res.cloudinary.com/daipbrnuc/image/upload/v1750014048/hez9qcxnfduhtpaimjoo.jpg",
+              uri: "https://avatars.githubusercontent.com/u/178933981?v=4",
             }}
             style={homestyles.profileImage}
           />
-          <Text style={homestyles.profileName}>Anirban </Text>
+          <Text style={homestyles.profileName}>Debopriya Debnath</Text>
+          <Text style={{color: "#FF3D3D", fontSize: 13, marginTop: 2}}>21 • Tech Engineer</Text>
+          <Text style={{color: "#fff", fontSize: 12, marginTop: 2}}>Skincare | Coding | Coffee</Text>
         </View>
 
         {/* Menu Items */}
@@ -119,7 +153,7 @@ export default function ZentryDashboard() {
           <MenuItem icon="pie-chart" label="Budget" />
           <MenuItem 
             icon="person" 
-            label="Persons" 
+            label="People" 
             onPress={() => router.push('../pages/people')}
           />
           <MenuItem icon="feedback" label="Feedback" />
@@ -135,7 +169,8 @@ export default function ZentryDashboard() {
 
       {/* Main Content */}
       <ScrollView contentContainerStyle={homestyles.content}>
-        <Text style={homestyles.welcomeText}>Welcome, Anirban</Text>
+        <Text style={homestyles.welcomeText}>Welcome, Debopriya 👋</Text>
+        <Text style={{color: "#FF3D3D", fontSize: 15, marginBottom: 10}}>Let's keep your glow & goals on track!</Text>
 
         {/* Balance Card */}
         <View style={homestyles.card}>
@@ -198,7 +233,7 @@ export default function ZentryDashboard() {
         {/* Monthly Budget Card */}
         <View style={homestyles.card}>
           <Text style={homestyles.cardTitle}>Monthly Budget</Text>
-          <Text style={homestyles.cardValue}>₹2,500</Text>
+          <Text style={homestyles.cardValue}>₹5,000</Text>
         </View>
 
         {/* Add Transaction Button */}
@@ -233,7 +268,7 @@ export default function ZentryDashboard() {
                 style={modalStyles.input}
                 value={formData.text}
                 onChangeText={(text) => setFormData({...formData, text})}
-                placeholder="Enter transaction description"
+                placeholder="e.g. Laneige Lip Mask"
                 placeholderTextColor="#666"
               />
 
