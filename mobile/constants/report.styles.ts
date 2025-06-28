@@ -108,7 +108,7 @@ export const reportstyles = StyleSheet.create({
   },
 
   plusIcon: {
-    fontSize: 28,
+    fontSize: 10,
     color: "#FFF",
     fontWeight: "800",
   },
@@ -140,5 +140,87 @@ export const reportstyles = StyleSheet.create({
     color: "#FF2D2D",
     fontWeight: "600",
     marginTop: 8,
+  },
+
+  // New styles
+  filterDropdown: {
+    position: "absolute",
+    top: 85,
+    left: 16,
+    right: 16,
+    backgroundColor: "#151515",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#333",
+    zIndex: 100,
+    padding: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+
+  filterOption: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+  },
+
+  selectedFilterOption: {
+    backgroundColor: "#FF2D2D",
+  },
+
+  filterOptionText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "500",
+  },
+
+  selectedFilterOptionText: {
+    fontWeight: "bold",
+  },
+
+  summaryCard: {
+    backgroundColor: "#151515",
+    borderRadius: 12,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: "#333",
+  },
+
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  summaryItem: {
+    alignItems: "center",
+    flex: 1,
+  },
+
+  summaryLabel: {
+    color: "#888",
+    fontSize: 12,
+    marginBottom: 4,
+  },
+
+  summaryAmount: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+  },
+
+  emptyStateText: {
+    color: "#666",
+    fontSize: 16,
+    marginTop: 12,
   },
 });

@@ -56,7 +56,8 @@ export const homestyles = StyleSheet.create({
 
   content: {
     flex: 1,
-    padding: 24,
+    marginTop: 2,
+    padding: 30,
   },
   welcomeText: {
     color: "#FFFFFF",
